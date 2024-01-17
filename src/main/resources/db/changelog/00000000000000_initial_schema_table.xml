@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="00000000000001" author="dustin">
+        <createTable tableName="t_users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mfa_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mfa_secret" type="varchar(255)"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="created_date" type="timestamp(6)"/>
+            <column name="last_modified_by" type="varchar(255)"/>
+            <column name="last_modified_date" type="timestamp(6)"/>
+        </createTable>
+
+        <createTable tableName="t_user_details">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="created_date" type="timestamp(6)"/>
+            <column name="last_modified_by" type="varchar(255)"/>
+            <column name="last_modified_date" type="timestamp(6)"/>
+        </createTable>
+
+        <createTable tableName="t_user_sessions">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="access_token_id" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="refresh_token_id" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_time" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="created_date" type="timestamp(6)"/>
+            <column name="last_modified_by" type="varchar(255)"/>
+            <column name="last_modified_date" type="timestamp(6)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="fk_user_id"
+                                 baseTableName="t_user_details"
+                                 constraintName="fk_user_detail_userId"
+                                 referencedColumnNames="id"
+                                 referencedTableName="t_users"/>
+
+        <addForeignKeyConstraint baseColumnNames="fk_user_id"
+                                 baseTableName="t_user_sessions"
+                                 constraintName="fk_user_session_userId"
+                                 referencedColumnNames="id"
+                                 referencedTableName="t_users"/>
+    </changeSet>
+
+    <changeSet id="00000000000002" author="dustin">
+        <loadData tableName="t_users"
+                  file="db/data/super_user.csv"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="00000000000003" author="dustin">
+        <createTable tableName="t_user_tokens">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token_type" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_channel" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_value" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_expire_time" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="created_date" type="timestamp(6)"/>
+            <column name="last_modified_by" type="varchar(255)"/>
+            <column name="last_modified_date" type="timestamp(6)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="fk_user_id"
+                                 baseTableName="t_user_tokens"
+                                 constraintName="fk_user_tokens_userId"
+                                 referencedColumnNames="id"
+                                 referencedTableName="t_users"/>
+    </changeSet>
+</databaseChangeLog>

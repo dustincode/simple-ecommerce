@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    container_name: simple-ecommerce-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: simple_ecommerce
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '6606:3306'
+    expose:
+      - '3306'
+    command: mysqld --innodb_use_native_aio=0 --innodb_log_files_in_group=2 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  simple-ecommerce-api:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: simple-ecommerce-api:latest
+    container_name: simple-ecommerce-api
+    restart: always
+    ports:
+      - '8080:8080'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+#volumes:
+#  ecommerce-db:
